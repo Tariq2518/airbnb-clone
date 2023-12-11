@@ -7,6 +7,7 @@ import Modal from './components/modals/Modal';
 import RegisterModal from './components/modals/RegisterModal';
 import ToastProvider from './providers/ToastProvider';
 import LoginModal from './components/modals/LoginModal';
+import getCurrentUser from './actions/getCurrentUser';
 
 const font = Nunito({ subsets: ['latin'] })
 
@@ -15,11 +16,12 @@ export const metadata: Metadata = {
   description: 'Airbnb clone built with Next.js',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const currentUser = await getCurrentUser();
 
   return (
     <html lang="en">
@@ -28,7 +30,7 @@ export default function RootLayout({
           <ToastProvider />
           <LoginModal/>
           <RegisterModal/>
-          <Navbar />
+          <Navbar currentUser = {currentUser}/>
         </ClientOnly>
         <div className="pb-20 pt-28">
           {children}

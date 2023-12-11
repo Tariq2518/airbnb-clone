@@ -1,6 +1,6 @@
 'use client';
 import axios from "axios";
-import { signIn } from "next-auth/react"
+import { signIn } from "next-auth/react";
 import { AiFillGithub } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { useCallback, useState } from "react";
@@ -36,12 +36,13 @@ const LoginModal = () => {
         setIsLoading(true);
         
         console.log("Data",data);
-        debugger;
         signIn('Credentials', { 
             ...data, 
             redirect: false,
           })
           .then((callback) => {
+            
+            console.log("callback",callback);
             setIsLoading(false);
       
             if (callback?.ok) {

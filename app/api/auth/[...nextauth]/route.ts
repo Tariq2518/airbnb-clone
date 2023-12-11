@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { AuthOptions } from "next-auth";
-import prisma from "../../libs/prismadb";
+import prisma from "../../../libs/prismadb";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -19,27 +19,30 @@ export const authOptions : AuthOptions = {
             clientSecret: process.env.GOOGLE_SECRET as string
         }),
         CredentialsProvider({
+            id: "Credentials",
             name:  "Credentials",
             credentials: {
-                email: { label: "email", type: "text"},
-                password: { label: "password", type: "password"},
+                email: { label: "Email", type: "text"},
+                password: { label: "Password", type: "password"},
             },
             
-            async authorize(credentials, req) {
+            async authorize(credentials) {
             
                 console.log("credentials", credentials)
-                debugger;
+              
                 if(!credentials?.email || !credentials?.password) {
                     console.log("wrong pass")
                     throw new Error("Invalid credentials");
                 }
                 
+                try {
                  const user = await prisma.user.findUnique({
                     where: {
                         email: credentials?.email
                     }
 
                 });
+            
                console.log("user", user)
                 if(!user || !user.hashedPassword){
                     console.log("no password")
@@ -53,12 +56,14 @@ export const authOptions : AuthOptions = {
                     console.log("invalid")
                     throw new Error("Invalid credentials");
                 }
-
+                return user;
                
                // console.log("user", user)
+            }catch(err){
+                console.log("err", err)
+                return null;
+            }
                 
-                return user;
-
             }
         
         }
@@ -77,4 +82,6 @@ export const authOptions : AuthOptions = {
 
 };
 
-export default NextAuth(authOptions);
+const handler = NextAuth(authOptions);
+
+export {handler as GET , handler as POST};
