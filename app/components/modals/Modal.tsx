@@ -45,6 +45,7 @@ const Modal: React.FC<ModalProps> = ({
 
     const handleSubmit = useCallback(() => {
         if(disabled) return;
+        debugger
         onSubmit();
 
     }, [disabled, onSubmit]);

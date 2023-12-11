@@ -19,41 +19,57 @@ export const authOptions : AuthOptions = {
             clientSecret: process.env.GOOGLE_SECRET as string
         }),
         CredentialsProvider({
-            name:  "credentials",
+            name:  "Credentials",
             credentials: {
                 email: { label: "email", type: "text"},
                 password: { label: "password", type: "password"},
             },
-            async authorize(credentials) {
+            
+            async authorize(credentials, req) {
+            
+                console.log("credentials", credentials)
+                debugger;
                 if(!credentials?.email || !credentials?.password) {
+                    console.log("wrong pass")
                     throw new Error("Invalid credentials");
                 }
-
-                const user = await prisma.user.findUnique({
+                
+                 const user = await prisma.user.findUnique({
                     where: {
-                        email: credentials.email
+                        email: credentials?.email
                     }
+
                 });
-
+               console.log("user", user)
                 if(!user || !user.hashedPassword){
+                    console.log("no password")
                     throw new Error("Invalid credentials");
                 }
 
+                
                 const isValid = await bcrypt.compare(credentials.password, user.hashedPassword);
-
+                
                 if(!isValid) {
+                    console.log("invalid")
                     throw new Error("Invalid credentials");
                 }
 
+               
+               // console.log("user", user)
+                
                 return user;
 
             }
-        })
+        
+        }
+        
+        )
     ],
+
     pages:{
        signIn:'/',
     },
-    debug: process.env.NODE_ENV === "development",
+    debug: process.env.NODE_ENV === 'development',
     session:{
         strategy: "jwt",
     },
