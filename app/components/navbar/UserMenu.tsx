@@ -9,6 +9,8 @@ import { User } from '@prisma/client';
 import { signOut } from 'next-auth/react';
 import { SafeUser } from '/app/types';
 import useRentModal from '/app/hooks/useRentModal';
+import { logEvent } from 'firebase/analytics';
+import { analytics } from '/app/firebase';
 
 interface UserMenuProps {
     currentUser?: SafeUser| null;
@@ -24,6 +26,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
 
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = useCallback(() => {
+        logEvent(analytics, 'menu_toggle', {button: "menu"});
         setIsOpen((value) => !value);
     }, []);
 
@@ -105,7 +108,12 @@ const UserMenu: React.FC<UserMenuProps> = ({
                              onClick={() => {}}
                              label="My Properties"/>
                              <MenuItem
-                             onClick={rentModal.onOpen}
+                             onClick={() =>{
+                                logEvent(analytics, 'rent_model_toggle', {button: "rent"});
+                                rentModal.onOpen;
+                             }
+                                
+                            }
                              label="Airbnb my Home"/>
                             <hr/>
                             <MenuItem

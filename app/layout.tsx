@@ -17,14 +17,19 @@ export const metadata: Metadata = {
   description: 'Airbnb clone built with Next.js',
 }
 
+
+
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  
   const currentUser = await getCurrentUser();
+  
 
   return (
+    
     <html lang="en">
       <body className={font.className}>
         <ClientOnly>
